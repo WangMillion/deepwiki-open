@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1-labs
+# syntax=crpi-ngghq9eyn57zobss.cn-hangzhou.personal.cr.aliyuncs.com/wangmillion/oversea-image:dockerfile-1-labs
 
 # Build argument for custom certificates directory
 ARG CUSTOM_CERT_DIR="certs"
@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
-FROM node_base AS node_builder
+FROM crpi-ngghq9eyn57zobss.cn-hangzhou.personal.cr.aliyuncs.com/wangmillion/oversea-image:node-20-alpine3.22 AS node_base
 WORKDIR /app
 COPY --from=node_deps /app/node_modules ./node_modules
 # Copy only necessary files for Next.js build
@@ -22,7 +22,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN NODE_ENV=production npm run build
 
-FROM python:3.11-slim AS py_deps
+FROM crpi-ngghq9eyn57zobss.cn-hangzhou.personal.cr.aliyuncs.com/wangmillion/oversea-image:python-3.11-slim
 WORKDIR /app
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -103,5 +103,3 @@ ENV SERVER_BASE_URL=http://localhost:${PORT:-8001}
 # Create empty .env file (will be overridden if one exists at runtime)
 RUN touch .env
 
-# Command to run the application
-CMD ["/app/start.sh"]
